@@ -7,7 +7,7 @@ interface Props {
   value: string;
 }
 
-function TableFilter({ className, onChange, value }: Props) {
+export default function TableFilter({ className, onChange, value }: Props) {
   return (
     <Form.Group className={className}>
       <Form.Label>Search</Form.Label>
@@ -23,5 +23,3 @@ function TableFilter({ className, onChange, value }: Props) {
 TableFilter.defaultProps = {
   className: null,
 };
-
-export default TableFilter;

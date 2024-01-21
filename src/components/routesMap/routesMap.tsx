@@ -4,6 +4,7 @@ import AccountsTable from 'components/AccountsTable';
 import CampaignsTable from 'components/CampaignsTable';
 import ProfilesTable from 'components/ProfilesTable';
 import routes from 'constants/routes';
+import NotFoundPage from 'components/NotFoundPage';
 
 const routesMap = createBrowserRouter(
   [
@@ -17,11 +18,15 @@ const routesMap = createBrowserRouter(
         },
         {
           element: <ProfilesTable />,
-          path: `/${routes.ACCOUNTS}/:accountId/${routes.PROFILES}`,
+          path: routes.PROFILES,
         },
         {
           element: <CampaignsTable />,
-          path: `/${routes.ACCOUNTS}/:accountId/${routes.PROFILES}/:profileId/${routes.CAMPAIGNS}`,
+          path: routes.CAMPAIGNS,
+        },
+        {
+          element: <NotFoundPage />,
+          path: '*',
         },
       ],
     },

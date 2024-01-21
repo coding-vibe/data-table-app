@@ -1,8 +1,8 @@
 const routes = {
   ROOT: '/',
   ACCOUNTS: 'accounts',
-  PROFILES: 'profiles',
-  CAMPAIGNS: 'campaigns',
+  PROFILES: '/accounts/:accountId/profiles',
+  CAMPAIGNS: '/accounts/:accountId/profiles/:profileId/campaigns',
 };
 
 export default routes;
