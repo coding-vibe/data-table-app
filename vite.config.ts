@@ -7,13 +7,10 @@ export default defineConfig({
   plugins: [react(), eslint()],
   resolve: {
     alias: {
-      api: '/src/api',
       assets: '/src/assets',
       components: '/src/components',
       constants: '/src/constants',
-      contexts: '/src/contexts',
       fixtures: '/src/fixtures',
-      locales: '/src/locales',
       types: '/src/types',
       utils: '/src/utils',
     },

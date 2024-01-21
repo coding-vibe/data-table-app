@@ -8,6 +8,7 @@ const MAX_YEARS = 10;
 const MAX_CLICKS = 50000;
 
 const campaigns = createFixture<Campaign>(DATA_LENGTH, () => ({
+  id: faker.string.nanoid(ID_LENGTH),
   date: faker.date.past({ years: MAX_YEARS }),
   campaignsId: faker.string.nanoid(ID_LENGTH),
   clicks: faker.number.int({ max: MAX_CLICKS }),

@@ -1,5 +1,4 @@
-import { format } from 'date-fns';
-import DATE_FORMAT from './dateFormat';
+import renderDateCell from 'utils/renderDateField';
 
 const accountsTableColumns = [
   { id: 'accountId', label: 'Account id', sortable: true, searchable: false },
@@ -10,7 +9,7 @@ const accountsTableColumns = [
     label: 'Creation date',
     sortable: true,
     searchable: false,
-    renderCell: (value: string): string => format(value, DATE_FORMAT),
+    renderCell: renderDateCell,
   },
 ];
 

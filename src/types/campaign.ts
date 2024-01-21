@@ -1,4 +1,6 @@
-interface Campaign {
+import BaseEntity from './baseEntity';
+
+interface Campaign extends BaseEntity {
   date: Date;
   campaignsId: string;
   clicks: number;

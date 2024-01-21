@@ -3,7 +3,7 @@ import campaignsTableColumns from 'constants/campaignsTableColumns';
 import campaigns from 'fixtures/campaigns';
 import Campaign from 'types/campaign';
 
-export default function AccountsTable() {
+export default function CampaignsTable() {
   return (
     <Table<Campaign>
       data={campaigns}

@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import Pagination from 'react-bootstrap/Pagination';
+import { ChangeEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { Table as BootstrapTable } from 'react-bootstrap';
-import { faker } from '@faker-js/faker';
+import TableFilter from 'components/TableFilter';
+import Paginator from 'components/Paginator';
+import INITIAL_PAGE_NUMBER from 'constants/initialPageNumber';
 import TableColumn from 'types/tableColumn';
+import BaseEntity from 'types/baseEntity';
+import SortOrder from 'types/sortOrder';
 
 interface Props<T> {
   columns: TableColumn[];
@@ -11,34 +14,133 @@ interface Props<T> {
 }
 
 const ITEMS_PER_PAGE = 10;
-export default function Table<T extends object>({
+
+export default function Table<T extends BaseEntity>({
   columns,
   data,
   onRowClick,
 }: Props<T>) {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const columnsOrder = columns.map(({ id }) => id);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  const [searchValue, onSearchChange] = useState<string>('');
+  const [currentPage, onSelectPage] = useState<number>(INITIAL_PAGE_NUMBER);
+  const [sorting, onSetSorting] = useState<{ [key: string]: SortOrder }>({});
 
-  const displayedData = data.slice(startIndex, endIndex);
-  const getColumnByKey = (columns: TableColumn[], key: string): TableColumn => {
-    const foundColumn = columns.find((column) => column.id === key);
-    if (foundColumn) {
-      return foundColumn;
-    }
-    throw new Error(`Column "${key}" not found`);
+  const orderedColumnIds = columns.map(({ id }) => id);
+  const searchableFields = columns.reduce<string[]>(
+    (acc, { id, searchable }) => (searchable ? [...acc, id] : acc),
+    [],
+  );
+  const sortableFields = columns.reduce<string[]>(
+    (acc, { id, sortable }) => (sortable ? [...acc, id] : acc),
+    [],
+  );
+
+  const handlePageChange = (pageNumber: number) => {
+    onSelectPage(pageNumber);
   };
-  // const sortBy = (key) => {
-  //   data.sort((a, b) => (a[key] > b[key] ? 1 : -1));
-  // };
+  const handleSortingChange = (id: string) => {
+    onSetSorting((prev) => {
+      if (id in sorting) {
+        return {
+          ...prev,
+          [id]: prev[id] === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC,
+        };
+      }
+
+      return { ...prev, [id]: SortOrder.ASC };
+    });
+  };
+  const handleFilterQueryChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    onSearchChange(value);
+  };
+
+  const handleFormatValueForFiltering = (value: string) =>
+    value.toLowerCase().trim();
+
+  const filteredData = useMemo((): T[] => {
+    if (!searchableFields.length) {
+      return data;
+    }
+
+    const formattedFilterQuery = handleFormatValueForFiltering(searchValue);
+
+    return data.filter((row) =>
+      searchableFields.some((field) => {
+        const cellValue = row[field];
+
+        // TODO: provide filtering for other types of data via column props
+        if (typeof cellValue !== 'string') {
+          return true;
+        }
+
+        const formattedFieldValue = handleFormatValueForFiltering(cellValue);
+
+        return formattedFieldValue.includes(formattedFilterQuery);
+      }),
+    );
+  }, [data, searchValue, searchableFields]);
+
+  const sortedData = useMemo<T[]>(
+    () =>
+      sortableFields.reduce<T[]>((acc, sortField) => {
+        if (!(sortField in sorting)) {
+          return acc;
+        }
+
+        const sortOrder = sorting[sortField];
+
+        return acc.sort((a, b) => {
+          const valueA = a[sortField];
+          const valueB = b[sortField];
+
+          if (typeof valueA === 'number' && typeof valueB === 'number') {
+            return sortOrder === SortOrder.ASC
+              ? valueA - valueB
+              : valueB - valueA;
+          }
+
+          if (
+            (typeof valueA === 'string' && typeof valueB === 'string') ||
+            (valueA instanceof Date && valueB instanceof Date)
+          ) {
+            if (sortOrder === SortOrder.ASC) {
+              return valueA > valueB ? 1 : -1;
+            }
+
+            if (sortOrder === SortOrder.DESC) {
+              return valueA > valueB ? -1 : 1;
+            }
+          }
+
+          // TODO: provide sorting for other types of data via column props
+          return 0;
+        });
+      }, filteredData),
+    [sortableFields, sorting, filteredData],
+  );
+
+  useEffect(() => {
+    onSelectPage(INITIAL_PAGE_NUMBER);
+  }, [searchValue]);
+
+  const displayedData = useMemo<T[]>(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+
+    return sortedData.slice(startIndex, endIndex);
+  }, [currentPage, sortedData]);
+
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   return (
     <div>
+      {!!searchableFields.length && (
+        <TableFilter
+          className='mb-3'
+          value={searchValue}
+          onChange={handleFilterQueryChange}
+        />
+      )}
       <BootstrapTable
         bordered
         hover
@@ -47,62 +149,56 @@ export default function Table<T extends object>({
         striped>
         <thead>
           <tr>
-            {columns.map(({ id, label }) => (
-              <th key={id}>{label}</th>
+            {columns.map(({ id, label, sortable }) => (
+              <th key={id}>
+                {label}{' '}
+                {!!sortable && (
+                  <button
+                    onClick={() => handleSortingChange(id)}
+                    type='button'>
+                    {id in sorting && sorting[id]}
+                    {!(id in sorting) && 'Sort me'}
+                  </button>
+                )}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {displayedData.map((row) => (
-            <tr
-              key={faker.string.nanoid()}
-              onClick={() => onRowClick && onRowClick(row)}>
-              {Object.entries(row)
-                .filter(([key]) => columnsOrder.includes(key))
-                .sort(
-                  ([a], [b]) =>
-                    columnsOrder.indexOf(a) - columnsOrder.indexOf(b),
-                )
-                .map(([key, value]) => (
-                  <td key={key}>
-                    {getColumnByKey(columns, key)?.renderCell
-                      ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                        getColumnByKey(columns, key)?.renderCell(value)
-                      : value}
-                  </td>
-                ))}
+          {displayedData.length ? (
+            displayedData.map((row) => (
+              <tr
+                key={row.id}
+                onClick={() => onRowClick && onRowClick(row)}>
+                {Object.entries(row)
+                  .filter(([key]) => orderedColumnIds.includes(key))
+                  .sort(
+                    ([a], [b]) =>
+                      orderedColumnIds.indexOf(a) - orderedColumnIds.indexOf(b),
+                  )
+                  .map(([key, value], index) => {
+                    const renderCell = columns[index]?.renderCell;
+
+                    return (
+                      <td key={key}>
+                        {renderCell ? renderCell(value) : (value as ReactNode)}
+                      </td>
+                    );
+                  })}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={columns.length}>No data found</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </BootstrapTable>
-      <Pagination>
-        <Pagination.First
-          onClick={() => handlePageChange(1)}
-          disabled={currentPage === 1}
-        />
-        <Pagination.Prev
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        />
-        {Array.from({ length: totalPages }, (_, index) => (
-          <Pagination.Item
-            key={index + 1}
-            active={index + 1 === currentPage}
-            onClick={() => handlePageChange(index + 1)}>
-            {index + 1}
-          </Pagination.Item>
-        ))}
-        <Pagination.Next
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        />
-        <Pagination.Last
-          onClick={() => handlePageChange(totalPages)}
-          disabled={currentPage === totalPages}
-        />
-      </Pagination>
+      <Paginator
+        currentPage={currentPage}
+        onPageClick={handlePageChange}
+        totalPages={totalPages}
+      />
     </div>
   );
 }

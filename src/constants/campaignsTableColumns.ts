@@ -1,12 +1,11 @@
-import { format } from 'date-fns';
-import DATE_FORMAT from './dateFormat';
+import renderDateCell from 'utils/renderDateField';
 
 const campaignsTableColumns = [
   {
     id: 'campaignsId',
     label: 'Campaign id',
     sortable: true,
-    searchable: false,
+    searchable: true,
   },
   { id: 'cost', label: 'Cost', sortable: true, searchable: false },
   { id: 'clicks', label: 'Clicks', sortable: true, searchable: false },
@@ -14,8 +13,8 @@ const campaignsTableColumns = [
     id: 'date',
     label: 'Date',
     sortable: true,
-    searchable: true,
-    renderCell: (value: string): string => format(value, DATE_FORMAT),
+    searchable: false,
+    renderCell: renderDateCell,
   },
 ];
 

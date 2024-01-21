@@ -6,6 +6,7 @@ const DATA_LENGTH = 50;
 const ID_LENGTH = 3;
 
 const profiles = createFixture<Profile>(DATA_LENGTH, () => ({
+  id: faker.string.nanoid(ID_LENGTH),
   country: faker.location.country(),
   marketplace: faker.company.name(),
   profileId: faker.string.nanoid(ID_LENGTH),
