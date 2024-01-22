@@ -7,7 +7,7 @@ import Account from 'types/account';
 import renderDateCell from 'utils/renderDateField';
 
 const accountsTableColumns = [
-  { id: 'accountId', label: 'Account id', sortable: true, searchable: false },
+  { id: 'accountId', label: 'Account id', sortable: true, searchable: true },
   { id: 'email', label: 'Email', sortable: true, searchable: true },
   { id: 'authToken', label: 'Auth token', sortable: true, searchable: false },
   {

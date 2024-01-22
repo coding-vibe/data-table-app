@@ -11,7 +11,7 @@ const breadcrumbs = [
 ];
 
 const profilesTableColumns = [
-  { id: 'profileId', label: 'Profile id', sortable: true, searchable: false },
+  { id: 'profileId', label: 'Profile id', sortable: true, searchable: true },
   { id: 'country', label: 'Country', sortable: true, searchable: true },
   {
     id: 'marketplace',

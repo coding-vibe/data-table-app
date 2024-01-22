@@ -13,7 +13,7 @@ const campaignsTableColumns = [
     sortable: true,
     searchable: true,
   },
-  { id: 'cost', label: 'Cost', sortable: true, searchable: false },
+  { id: 'cost', label: 'Cost', sortable: true, searchable: true },
   { id: 'clicks', label: 'Clicks', sortable: true, searchable: false },
   {
     id: 'date',
