@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 
 export const button = css`
-  padding: 0px;
+  padding: 2px 4px;
 `;
 
 export const wrap = css`

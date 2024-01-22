@@ -1,5 +1,5 @@
 import { ChangeEvent, ReactNode, useEffect, useMemo, useState } from 'react';
-import { Table as BootstrapTable } from 'react-bootstrap';
+import { Table as BootstrapTable, Button } from 'react-bootstrap';
 import TableFilter from 'components/TableFilter';
 import Paginator from 'components/Paginator';
 import INITIAL_PAGE_NUMBER from 'constants/initialPageNumber';
@@ -155,11 +155,13 @@ export default function Table<T extends BaseEntity>({
                 <div css={classes.wrap}>
                   {label}{' '}
                   {!!sortable && (
-                    <button
-                      className='btn'
+                    <Button
                       css={classes.button}
                       onClick={() => handleSortingChange(id)}
-                      type='button'>
+                      type='button'
+                      icon
+                      rom
+                      bootctrsp>
                       {id in sorting &&
                         (sorting[id] === SortOrder.ASC ? (
                           <i className='bi bi-sort-up' />
@@ -167,7 +169,7 @@ export default function Table<T extends BaseEntity>({
                           <i className='bi bi-sort-down' />
                         ))}
                       {!(id in sorting) && <i className='bi bi-filter' />}
-                    </button>
+                    </Button>
                   )}
                 </div>
               </th>
