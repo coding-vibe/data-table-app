@@ -1,15 +1,10 @@
+import { generatePath, useParams } from 'react-router-dom';
 import Breadcrumbs from 'components/Breadcrumbs';
 import Table from 'components/Table';
 import routes from 'constants/routes';
 import campaigns from 'fixtures/campaigns';
 import Campaign from 'types/campaign';
 import renderDateCell from 'utils/renderDateField';
-
-const breadcrumbs = [
-  { title: 'Accounts', path: routes.ACCOUNTS },
-  { title: 'Profiles', path: routes.PROFILES },
-  { title: 'Campaigns' },
-];
 
 const campaignsTableColumns = [
   {
@@ -30,6 +25,16 @@ const campaignsTableColumns = [
 ];
 
 export default function CampaignsPage() {
+  const { profileId, accountId } = useParams();
+  const breadcrumbs = [
+    { title: 'Accounts', path: routes.ACCOUNTS },
+    {
+      title: 'Profiles',
+      path: generatePath(routes.PROFILES, { accountId, profileId }),
+    },
+    { title: 'Campaigns' },
+  ];
+
   return (
     <div>
       <Breadcrumbs
