@@ -3,9 +3,10 @@ import { Table as BootstrapTable } from 'react-bootstrap';
 import TableFilter from 'components/TableFilter';
 import Paginator from 'components/Paginator';
 import INITIAL_PAGE_NUMBER from 'constants/initialPageNumber';
-import TableColumn from 'types/tableColumn';
 import BaseEntity from 'types/baseEntity';
 import SortOrder from 'types/sortOrder';
+import TableColumn from 'types/tableColumn';
+import * as classes from './styles';
 
 interface Props<T> {
   columns: TableColumn[];
@@ -20,8 +21,8 @@ export default function Table<T extends BaseEntity>({
   data,
   onRowClick,
 }: Props<T>) {
-  const [searchValue, onSearchChange] = useState<string>('');
   const [currentPage, onSelectPage] = useState<number>(INITIAL_PAGE_NUMBER);
+  const [searchValue, onSearchChange] = useState<string>('');
   const [sorting, onSetSorting] = useState<{ [key: string]: SortOrder }>({});
 
   const orderedColumnIds = columns.map(({ id }) => id);
@@ -151,15 +152,24 @@ export default function Table<T extends BaseEntity>({
           <tr>
             {columns.map(({ id, label, sortable }) => (
               <th key={id}>
-                {label}{' '}
-                {!!sortable && (
-                  <button
-                    onClick={() => handleSortingChange(id)}
-                    type='button'>
-                    {id in sorting && sorting[id]}
-                    {!(id in sorting) && 'Sort me'}
-                  </button>
-                )}
+                <div css={classes.wrap}>
+                  {label}{' '}
+                  {!!sortable && (
+                    <button
+                      className='btn'
+                      css={classes.button}
+                      onClick={() => handleSortingChange(id)}
+                      type='button'>
+                      {id in sorting &&
+                        (sorting[id] === SortOrder.ASC ? (
+                          <i className='bi bi-sort-up' />
+                        ) : (
+                          <i className='bi bi-sort-down' />
+                        ))}
+                      {!(id in sorting) && <i className='bi bi-filter' />}
+                    </button>
+                  )}
+                </div>
               </th>
             ))}
           </tr>

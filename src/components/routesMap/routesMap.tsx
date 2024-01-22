@@ -1,23 +1,27 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Layout from 'components/Layout';
-import AccountsTable from 'components/AccountsTable';
-import CampaignsTable from 'components/CampaignsTable';
-import ProfilesTable from 'components/ProfilesTable';
+import AccountsPage from 'components/AccountsPage';
+import CampaignsTable from 'components/CampaignsPage';
+import ProfilesPage from 'components/ProfilesPage';
 import routes from 'constants/routes';
 import NotFoundPage from 'components/NotFoundPage';
 
 const routesMap = createBrowserRouter(
   [
     {
-      path: routes.ROOT,
       element: <Layout />,
+      path: routes.ROOT,
       children: [
         {
-          element: <AccountsTable />,
+          element: <Navigate to={routes.ACCOUNTS} />,
+          path: routes.ROOT,
+        },
+        {
+          element: <AccountsPage />,
           path: routes.ACCOUNTS,
         },
         {
-          element: <ProfilesTable />,
+          element: <ProfilesPage />,
           path: routes.PROFILES,
         },
         {

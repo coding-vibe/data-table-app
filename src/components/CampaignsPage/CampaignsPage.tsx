@@ -1,7 +1,15 @@
+import Breadcrumbs from 'components/Breadcrumbs';
 import Table from 'components/Table';
+import routes from 'constants/routes';
 import campaigns from 'fixtures/campaigns';
 import Campaign from 'types/campaign';
 import renderDateCell from 'utils/renderDateField';
+
+const breadcrumbs = [
+  { title: 'Accounts', path: routes.ACCOUNTS },
+  { title: 'Profiles', path: routes.PROFILES },
+  { title: 'Campaigns' },
+];
 
 const campaignsTableColumns = [
   {
@@ -21,11 +29,17 @@ const campaignsTableColumns = [
   },
 ];
 
-export default function CampaignsTable() {
+export default function CampaignsPage() {
   return (
-    <Table<Campaign>
-      data={campaigns}
-      columns={campaignsTableColumns}
-    />
+    <div>
+      <Breadcrumbs
+        className='mb-3'
+        items={breadcrumbs}
+      />
+      <Table<Campaign>
+        columns={campaignsTableColumns}
+        data={campaigns}
+      />
+    </div>
   );
 }

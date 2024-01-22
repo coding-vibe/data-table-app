@@ -1,8 +1,9 @@
 import { useNavigate, generatePath } from 'react-router-dom';
+import Breadcrumbs from 'components/Breadcrumbs';
 import Table from 'components/Table';
+import routes from 'constants/routes';
 import accounts from 'fixtures/accounts';
 import Account from 'types/account';
-import routes from 'constants/routes';
 import renderDateCell from 'utils/renderDateField';
 
 const accountsTableColumns = [
@@ -18,7 +19,9 @@ const accountsTableColumns = [
   },
 ];
 
-export default function AccountsTable() {
+const breadcrumbs = [{ title: 'Accounts' }];
+
+export default function AccountsPage() {
   const navigate = useNavigate();
 
   const handleRowClick = ({ accountId }: Account) => {
@@ -27,10 +30,16 @@ export default function AccountsTable() {
   };
 
   return (
-    <Table<Account>
-      data={accounts}
-      columns={accountsTableColumns}
-      onRowClick={handleRowClick}
-    />
+    <div>
+      <Breadcrumbs
+        className='mb-3'
+        items={breadcrumbs}
+      />
+      <Table<Account>
+        data={accounts}
+        columns={accountsTableColumns}
+        onRowClick={handleRowClick}
+      />
+    </div>
   );
 }

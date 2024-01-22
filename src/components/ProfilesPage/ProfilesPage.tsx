@@ -1,8 +1,14 @@
 import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import Breadcrumbs from 'components/Breadcrumbs';
 import Table from 'components/Table';
+import routes from 'constants/routes';
 import profiles from 'fixtures/profiles';
 import Profile from 'types/profile';
-import routes from 'constants/routes';
+
+const breadcrumbs = [
+  { title: 'Accounts', path: routes.ACCOUNTS },
+  { title: 'Profiles' },
+];
 
 const profilesTableColumns = [
   { id: 'profileId', label: 'Profile id', sortable: true, searchable: false },
@@ -15,7 +21,7 @@ const profilesTableColumns = [
   },
 ];
 
-export default function ProfileTable() {
+export default function ProfilesPage() {
   const navigate = useNavigate();
   const { accountId } = useParams();
 
@@ -26,10 +32,16 @@ export default function ProfileTable() {
   };
 
   return (
-    <Table<Profile>
-      data={profiles}
-      columns={profilesTableColumns}
-      onRowClick={handleRowClick}
-    />
+    <div>
+      <Breadcrumbs
+        className='mb-3'
+        items={breadcrumbs}
+      />
+      <Table<Profile>
+        columns={profilesTableColumns}
+        data={profiles}
+        onRowClick={handleRowClick}
+      />
+    </div>
   );
 }

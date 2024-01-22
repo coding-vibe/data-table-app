@@ -1,42 +1,42 @@
-import INITIAL_PAGE_NUMBER from 'constants/initialPageNumber';
 import Pagination from 'react-bootstrap/Pagination';
+import INITIAL_PAGE_NUMBER from 'constants/initialPageNumber';
 
 interface Props {
-  onPageClick: (pageNumber: number) => void;
   currentPage: number;
+  onPageClick: (pageNumber: number) => void;
   totalPages: number;
 }
 
 export default function Paginator({
-  onPageClick,
   currentPage,
+  onPageClick,
   totalPages,
 }: Props) {
   return (
     <Pagination>
       <Pagination.First
-        onClick={() => onPageClick(INITIAL_PAGE_NUMBER)}
         disabled={currentPage === INITIAL_PAGE_NUMBER}
+        onClick={() => onPageClick(INITIAL_PAGE_NUMBER)}
       />
       <Pagination.Prev
-        onClick={() => onPageClick(currentPage - 1)}
         disabled={currentPage === INITIAL_PAGE_NUMBER}
+        onClick={() => onPageClick(currentPage - 1)}
       />
       {Array.from({ length: totalPages }, (_, pageNumber) => (
         <Pagination.Item
-          key={pageNumber + 1}
           active={pageNumber + 1 === currentPage}
+          key={pageNumber + 1}
           onClick={() => onPageClick(pageNumber + 1)}>
           {pageNumber + 1}
         </Pagination.Item>
       ))}
       <Pagination.Next
-        onClick={() => onPageClick(currentPage + 1)}
         disabled={currentPage === totalPages}
+        onClick={() => onPageClick(currentPage + 1)}
       />
       <Pagination.Last
-        onClick={() => onPageClick(totalPages)}
         disabled={currentPage === totalPages}
+        onClick={() => onPageClick(totalPages)}
       />
     </Pagination>
   );
